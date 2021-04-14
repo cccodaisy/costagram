@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_app/feed_screen.dart';
+import 'package:costagram/feed_screen.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({

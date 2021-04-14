@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/home_page.dart';
-import 'package:flutter_app/constants/material_white.dart';
+import 'package:costagram/home_page.dart';
+import 'package:costagram/constants/material_white.dart';
 
 void main() {
   runApp(MyApp());
