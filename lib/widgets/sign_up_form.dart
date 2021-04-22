@@ -1,4 +1,6 @@
+import 'package:costagram/constants/auth_input_decor.dart';
 import 'package:costagram/constants/common_size.dart';
+import 'package:costagram/widgets/or_divider.dart';
 import 'package:flutter/material.dart';
 
 import '../home_page.dart';
@@ -39,7 +41,7 @@ class _SignUpFormState extends State<SignUpForm> {
               TextFormField(
                 controller: _emailController,
                 cursorColor: Colors.black54,
-                decoration: _textInputDecor("Email"),
+                decoration: textInputDecor("Email"),
                 validator: (text){
                   if(text.isNotEmpty && text.contains("@")){
                     return null;
@@ -55,7 +57,7 @@ class _SignUpFormState extends State<SignUpForm> {
                 controller: _pwController,
                 cursorColor: Colors.black54,
                 obscureText: true,
-                decoration: _textInputDecor("Password"),
+                decoration: textInputDecor("Password"),
                 validator: (text){
                   if(text.isNotEmpty && text.length > 5){
                     return null;
@@ -71,7 +73,7 @@ class _SignUpFormState extends State<SignUpForm> {
                 controller: _cpwController,
                 cursorColor: Colors.black54,
                 obscureText: true,
-                decoration: _textInputDecor("Confirm Password"),
+                decoration: textInputDecor("Confirm Password"),
                 validator: (text){
                   if(text.isNotEmpty && _pwController.text == text){
                     return null;
@@ -80,27 +82,21 @@ class _SignUpFormState extends State<SignUpForm> {
                   }
                 },
               ),
-              FlatButton(
-                color: Colors.blue,
-                onPressed: () {
-                  if(_formKey.currentState.validate()){
-                    print('Validation success!');
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (context) => HomePage()
-                      )
-                    );
-                  }
-                },
-                child: Text(
-                  'Join',
-                  style: TextStyle(
-                    color: Colors.white,
-                  )
+              SizedBox(
+                height: common_xs_gap,
+              ),
+              _submitButton(context),
+              SizedBox(
+                height: common_s_gap
+              ),
+              OrDivider(),
+              FlatButton.icon(
+                onPressed: (){},
+                textColor: Colors.blue,
+                icon: ImageIcon(
+                  AssetImage('assets/images/facebook.png')
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(6),
-                ),
+                label: Text('Login With Facebook')
               )
             ],
           )
@@ -109,34 +105,28 @@ class _SignUpFormState extends State<SignUpForm> {
     );
   }
 
-  InputDecoration _textInputDecor(String hint) {
-    return InputDecoration(
-        hintText: hint,
-        enabledBorder: _activeInputBorder(),
-        focusedBorder: _activeInputBorder(),
-        errorBorder: _errorInputBorder(),
-        focusedErrorBorder: _errorInputBorder(),
-        filled: true,
-        fillColor: Colors.grey[100]
+  FlatButton _submitButton(BuildContext context) {
+    return FlatButton(
+      color: Colors.blue,
+      onPressed: () {
+        if(_formKey.currentState.validate()){
+          print('Validation success!');
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => HomePage()
+            )
+          );
+        }
+      },
+      child: Text(
+        'Join',
+        style: TextStyle(
+          color: Colors.white,
+        )
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(6),
+      ),
     );
   }
-
-  OutlineInputBorder _errorInputBorder() {
-    return OutlineInputBorder(
-        borderSide: BorderSide(
-          color: Colors.redAccent,
-        ),
-        borderRadius: BorderRadius.circular(common_s_gap),
-      );
-  }
-
-  OutlineInputBorder _activeInputBorder() {
-    return OutlineInputBorder(
-          borderSide: BorderSide(
-              color: Colors.grey[300]
-          ),
-          borderRadius: BorderRadius.circular(common_s_gap)
-      );
-  }
-
 }

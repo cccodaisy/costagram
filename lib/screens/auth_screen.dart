@@ -41,11 +41,11 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                   },
                   child: RichText(
                     text: TextSpan(
-                      text: (selectedForm == 1) ? "Already have an account? " : "Don't have an account? ",
+                      text: (selectedForm == 1) ? "Don't have an account? " : "Already have an account? ",
                       style: TextStyle(color: Colors.grey),
                       children: [
                         TextSpan(
-                          text: (selectedForm == 1) ? "Sign In" : "Sign Up",
+                          text: (selectedForm == 1) ? "Sign Up" : "Sign In",
                           style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)
                         ),
                       ]
