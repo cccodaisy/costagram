@@ -1,7 +1,10 @@
 import 'package:camera/camera.dart';
 import 'package:costagram/constants/screen_size.dart';
+import 'package:costagram/models/camera_state.dart';
 import 'package:costagram/widgets/my_progress_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 class TakePhoto extends StatefulWidget {
@@ -14,32 +17,30 @@ class TakePhoto extends StatefulWidget {
 }
 
 class _TakePhotoState extends State<TakePhoto> {
-  
-  CameraController _controller;
   Widget _progress = MyProgressIndicator();
   
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<CameraDescription>>(
-      future: availableCameras(),
-      builder: (context, snapshot) {
+    return Consumer<CameraState>(
+      builder: (BuildContext context, CameraState cameraState, Widget child) {
         return Column(
           children: <Widget>[
-            ChangeNotifierProvider(
-              builder: ,
-              child: Container(
+            Container(
                 width: size.width,
                 height: size.width,
                 color: Colors.black,
                 child:
-                (snapshot.hasData) ?
-                  _getPreview(snapshot.data)
-                  : _progress
-              ),
+                (cameraState.isReadyToTakePhoto) ?
+                _getPreview(cameraState)
+                    : _progress
             ),
             Expanded(
               child: OutlineButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    if(cameraState.isReadyToTakePhoto) {
+                      _attemptTakePhoto(cameraState);
+                    }
+                  },
                   shape: CircleBorder(),
                   borderSide: BorderSide(
                     color: Colors.black12,
@@ -53,32 +54,35 @@ class _TakePhotoState extends State<TakePhoto> {
     );
   }
 
-  Widget _getPreview(List<CameraDescription> cameras) {
-    _controller = CameraController(
-      cameras[0],
-      ResolutionPreset.medium
+  Widget _getPreview(CameraState cameraState) {
+    return ClipRect(
+      child: OverflowBox(
+        alignment: Alignment.center,
+        child: FittedBox(
+          fit: BoxFit.fitWidth,
+          child: Container(
+              width: size.width,
+              height: size.width / cameraState.controller.value.aspectRatio,
+              child: CameraPreview(cameraState.controller)
+          ),
+        ),
+      ),
     );
+  }
 
-    return FutureBuilder(
-      future: _controller.initialize(),
-      builder: (context, snapshot) {
-        if(snapshot.connectionState == ConnectionState.done) {
-          return ClipRect(
-            child: OverflowBox(
-              alignment: Alignment.center,
-              child: FittedBox(
-                fit: BoxFit.fitWidth,
-                child: Container(
-                  width: size.width,
-                  height: size.width / _controller.value.aspectRatio,
-                  child: CameraPreview(_controller)
-                ),
-              ),
-            ),
-          );
-        } else {
-          return _progress;
-        }
-    });
+  void _attemptTakePhoto(CameraState cameraState) async {
+
+    final String timeInMilli = DateTime.now().millisecondsSinceEpoch.toString();
+
+    try{
+      final path = join(
+        (await getTemporaryDirectory()).path,
+        '$timeInMilli.png'
+      );
+      await cameraState.controller.takePicture(path);
+
+    }catch(e){
+
+    }
   }
 }

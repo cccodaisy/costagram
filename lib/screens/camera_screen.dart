@@ -11,7 +11,7 @@ class CameraScreen extends StatefulWidget {
   _CameraScreenState createState() {
     _cameraState.getReadyToTakePhoto();
     return _CameraScreenState();
-  };
+  }
 }
 
 class _CameraScreenState extends State<CameraScreen> {
@@ -22,6 +22,7 @@ class _CameraScreenState extends State<CameraScreen> {
   @override
   void dispose() {
     _pageController.dispose();
+    widget._cameraState.dispose();
     super.dispose();
   }
 
