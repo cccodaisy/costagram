@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:costagram/constants/screen_size.dart';
 import 'package:costagram/models/camera_state.dart';
+import 'package:costagram/screens/share_post_screen.dart';
 import 'package:costagram/widgets/my_progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
@@ -38,7 +41,7 @@ class _TakePhotoState extends State<TakePhoto> {
               child: OutlineButton(
                   onPressed: () {
                     if(cameraState.isReadyToTakePhoto) {
-                      _attemptTakePhoto(cameraState);
+                      _attemptTakePhoto(cameraState, context);
                     }
                   },
                   shape: CircleBorder(),
@@ -70,7 +73,7 @@ class _TakePhotoState extends State<TakePhoto> {
     );
   }
 
-  void _attemptTakePhoto(CameraState cameraState) async {
+  void _attemptTakePhoto(CameraState cameraState, BuildContext context) async {
 
     final String timeInMilli = DateTime.now().millisecondsSinceEpoch.toString();
 
@@ -80,6 +83,11 @@ class _TakePhotoState extends State<TakePhoto> {
         '$timeInMilli.png'
       );
       await cameraState.controller.takePicture(path);
+
+      File imageFile = File(path);
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => SharePostScreen(imageFile))
+      );
 
     }catch(e){
 
