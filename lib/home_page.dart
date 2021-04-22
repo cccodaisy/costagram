@@ -1,6 +1,7 @@
+import 'package:costagram/screens/profile_screen.dart';
+import 'package:costagram/screens/feed_screen.dart';
+import 'package:costagram/constants/screen_size.dart';
 import 'package:flutter/material.dart';
-
-import 'package:costagram/feed_screen.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({
@@ -33,13 +34,15 @@ class _HomePageState extends State<HomePage> {
     Container(
       color: Colors.deepPurpleAccent,
     ),
-    Container(
-      color: Colors.cyanAccent,
-    ),
+    ProfileScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
+    if (size == null) size = MediaQuery
+        .of(context)
+        .size;
+
     return Scaffold(
       body: IndexedStack(
         index: _selectedIndex,

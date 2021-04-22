@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:costagram/constants/common_size.dart';
+import 'package:costagram/constants/screen_size.dart';
 import 'package:costagram/widgets/comment.dart';
 import 'package:costagram/widgets/my_progress_indicator.dart';
 import 'package:costagram/widgets/rounded_avatar.dart';
@@ -7,7 +8,6 @@ import 'package:flutter/material.dart';
 
 class Post extends StatelessWidget {
   final int index;
-  Size size;
 
   Post(this.index, {
     Key key,
