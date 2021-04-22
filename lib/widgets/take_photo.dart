@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:costagram/constants/screen_size.dart';
 import 'package:costagram/widgets/my_progress_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class TakePhoto extends StatefulWidget {
   const TakePhoto({
@@ -24,14 +25,17 @@ class _TakePhotoState extends State<TakePhoto> {
       builder: (context, snapshot) {
         return Column(
           children: <Widget>[
-            Container(
-              width: size.width,
-              height: size.width,
-              color: Colors.black,
-              child:
-              (snapshot.hasData) ?
-                _getPreview(snapshot.data)
-                : _progress
+            ChangeNotifierProvider(
+              builder: ,
+              child: Container(
+                width: size.width,
+                height: size.width,
+                color: Colors.black,
+                child:
+                (snapshot.hasData) ?
+                  _getPreview(snapshot.data)
+                  : _progress
+              ),
             ),
             Expanded(
               child: OutlineButton(
