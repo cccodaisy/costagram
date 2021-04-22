@@ -1,3 +1,4 @@
+import 'package:costagram/screens/auth_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:costagram/home_page.dart';
 import 'package:costagram/constants/material_white.dart';
@@ -11,7 +12,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomePage(),
+      home: AuthScreen(),
+      // home: HomePage(),
       theme: ThemeData(primarySwatch: white)
     );
   }
