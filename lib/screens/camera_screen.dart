@@ -1,4 +1,6 @@
 import 'package:costagram/models/camera_state.dart';
+import 'package:costagram/models/gallery_state.dart';
+import 'package:costagram/widgets/my_gallery.dart';
 import 'package:costagram/widgets/take_photo.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -6,10 +8,12 @@ import 'package:provider/provider.dart';
 class CameraScreen extends StatefulWidget {
 
   CameraState _cameraState = CameraState();
+  GalleryState _galleryState = GalleryState();
 
   @override
   _CameraScreenState createState() {
     _cameraState.getReadyToTakePhoto();
+    _galleryState.initProvider();
     return _CameraScreenState();
   }
 }
@@ -33,6 +37,9 @@ class _CameraScreenState extends State<CameraScreen> {
         ChangeNotifierProvider<CameraState>.value(
           value: widget._cameraState,
         ),
+        ChangeNotifierProvider<GalleryState>.value(
+          value: widget._galleryState,
+        ),
       ],
       child: Scaffold(
         appBar: AppBar(
@@ -41,9 +48,7 @@ class _CameraScreenState extends State<CameraScreen> {
         body: PageView(
           controller: _pageController,
           children: <Widget>[
-            Container(
-              color: Colors.cyanAccent,
-            ),
+            MyGallery(),
             TakePhoto(),
             Container(
               color: Colors.greenAccent,

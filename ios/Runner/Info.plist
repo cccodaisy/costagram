@@ -46,6 +46,8 @@
     <string>Can I use the camera please???</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>Can I use the MIC please?????</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Can I use the Gallery please?????</string>
 
 </dict>
 </plist>

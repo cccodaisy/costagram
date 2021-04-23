@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:app_settings/app_settings.dart';
 import 'package:costagram/screens/camera_screen.dart';
 import 'package:costagram/screens/profile_screen.dart';
@@ -106,6 +108,8 @@ class _HomePageState extends State<HomePage> {
     await [
       Permission.camera,
       Permission.microphone,
+      Platform.isIOS ?
+      Permission.photos : Permission.storage
     ].request();
     bool permitted = true;
 
