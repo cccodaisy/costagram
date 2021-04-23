@@ -5,6 +5,7 @@ import 'package:costagram/screens/camera_screen.dart';
 import 'package:costagram/screens/profile_screen.dart';
 import 'package:costagram/screens/feed_screen.dart';
 import 'package:costagram/constants/screen_size.dart';
+import 'package:costagram/screens/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -31,9 +32,7 @@ class _HomePageState extends State<HomePage> {
 
   List<Widget> _screens = <Widget>[
     FeedScreen(),
-    Container(
-      color: Colors.blueAccent,
-    ),
+    SearchScreen(),
     Container(
       color: Colors.greenAccent,
     ),
