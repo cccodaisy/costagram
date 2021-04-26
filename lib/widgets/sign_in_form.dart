@@ -113,7 +113,7 @@ class _SignInFormState extends State<SignInForm> {
           print('Validation success!');
           Provider
             .of<FirebaseAuthState>(context, listen: false)
-            .login(email: _emailController.text, password: _pwController.text);
+            .login(context, email: _emailController.text, password: _pwController.text);
         }
       },
       child: Text(
