@@ -93,7 +93,11 @@ class _SignUpFormState extends State<SignUpForm> {
               ),
               OrDivider(),
               FlatButton.icon(
-                onPressed: (){},
+                onPressed: (){
+                  // Provider
+                  //   .of<FirebaseAuthState>(context, listen: false)
+                  //   .loginWithFacebook(context);
+                },
                 textColor: Colors.blue,
                 icon: ImageIcon(
                   AssetImage('assets/images/facebook.png')

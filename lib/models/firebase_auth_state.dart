@@ -1,3 +1,5 @@
+import 'package:costagram/models/repo/user_network_repository.dart';
+import 'package:costagram/utils/simple_snackbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -6,11 +8,12 @@ class FirebaseAuthState extends ChangeNotifier {
   FirebaseAuthStatus _firebaseAuthStatus = FirebaseAuthStatus.signin;
   FirebaseAuth _firebaseAuth =  FirebaseAuth.instance;
   FirebaseUser _firebaseUser;
+  // FacebookLogin _facebookLogin;
 
   void watchAuthChange() {
     _firebaseAuth.onAuthStateChanged.listen((firebaseUser) {
       if(firebaseUser == null && _firebaseUser == null) {
-        return;
+        changeFirebaseAuthStatus();
       } else if(firebaseUser != _firebaseUser) {
         _firebaseUser = firebaseUser;
         changeFirebaseAuthStatus();
@@ -21,28 +24,38 @@ class FirebaseAuthState extends ChangeNotifier {
   void registerUser(BuildContext context, {
     @required String email,
     @required String password
-  }){
-    _firebaseAuth
-      .createUserWithEmailAndPassword(email: email, password: password)
+  }) async {
+    changeFirebaseAuthStatus(FirebaseAuthStatus.progress);
+    AuthResult authResult = await _firebaseAuth
+      .createUserWithEmailAndPassword(email: email.trim(), password: password.trim())
       .catchError((error) {
         print(error);
-
         String _message = "";
-      switch(error.code){
-        case 'ERROR_WEAK_PASSWORD':
-          _message = '패스워드가 다릅니다.';
-          break;
-        case 'ERROR_INVALID_EMAIL':
-          _message = '올바른 이메일 형식이 아닙니다.';
-          break;
-        case 'ERROR_EMAIL_ALREADY_IN_USE':
-          _message = '이미 가입된 이메일입니다.';
-          break;
-      }
+        switch(error.code){
+          case 'ERROR_WEAK_PASSWORD':
+            _message = '패스워드가 다릅니다.';
+            break;
+          case 'ERROR_INVALID_EMAIL':
+            _message = '올바른 이메일 형식이 아닙니다.';
+            break;
+          case 'ERROR_EMAIL_ALREADY_IN_USE':
+            _message = '이미 가입된 이메일입니다.';
+            break;
+        }
 
       SnackBar snackBar = SnackBar(content: Text(_message));
       Scaffold.of(context).showSnackBar(snackBar);
     });
+
+    FirebaseUser firebaseUser = authResult.user;
+    if(firebaseUser == null){
+      SnackBar snackBar = SnackBar(content: Text("Please try again later."));
+      Scaffold.of(context).showSnackBar(snackBar);
+    } else {
+      await userNetworkRepository.attemptCreateUser(
+          userKey: firebaseUser.uid, email: firebaseUser.email
+      );
+    }
   }
 
   void login(
@@ -50,8 +63,10 @@ class FirebaseAuthState extends ChangeNotifier {
     @required String email,
     @required String password
   }){
+    changeFirebaseAuthStatus(FirebaseAuthStatus.progress);
+
     _firebaseAuth
-      .signInWithEmailAndPassword(email: email, password: password)
+      .signInWithEmailAndPassword(email: email.trim(), password: password.trim())
       .catchError((error) {
       print(error);
 
@@ -82,11 +97,15 @@ class FirebaseAuthState extends ChangeNotifier {
     });
   }
 
-  void signOut(){
+  void signOut() async {
+    changeFirebaseAuthStatus(FirebaseAuthStatus.progress);
     _firebaseAuthStatus = FirebaseAuthStatus.signout;
     if(_firebaseUser != null) {
       _firebaseUser = null;
-      _firebaseAuth.signOut();
+      await _firebaseAuth.signOut();
+      // if(await _facebookLogin.isLoggedIn){
+      //   await _facebookLogin.logOut();
+      // }
     }
     notifyListeners();
   }
@@ -104,6 +123,40 @@ class FirebaseAuthState extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  // void loginWithFacebook(BuildContext context) async {
+  //   if(_facebookLogin == null)
+  //   final _facebookLogin = FacebookLogin();
+  //   final result = await _facebookLogin.logIn(['email']);
+  //
+  //   switch(result.status) {
+  //     case FacebookLoginStatus.loggedIn:
+  //       _handleFacebookTokenWithFirebase(context, result.accessToken.token);
+  //       break;
+  //     case FacebookLoginStatus.cnacelledByUser:
+  //       simpleSnackbar(context, 'User cancel facebook sign in');
+  //       break;
+  //     case FacebookLoginStatus.error:
+  //       simpleSnackbar(context, 'facebook login error');
+  //       _facebookLogin.logOut();
+  //       break;
+  //   }
+  // }
+  //
+  // void _handleFacebookTokenWithFirebase(BuildContext context, String token) async {
+  //   final AuthCredential credential = FacebookAuthProvider.getCredential(accessToken: token);
+  //
+  //   final AuthResult authResult = await _firebaseAuth.signInWithCredential(credential);
+  //   final FirebaseUser user = authResult.user;
+  //
+  //   if(user == null) {
+  //     simpleSnackbar(context, "페북 로그인이 실패. 나중에 시도해주세요.");
+  //   } else {
+  //     _firebaseUser = user;
+  //   }
+  //   notifyListeners();
+  // }
+
   FirebaseAuthStatus get firebaseAuthStatus=>_firebaseAuthStatus;
 }
 

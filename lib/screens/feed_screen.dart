@@ -1,3 +1,4 @@
+import 'package:costagram/models/repo/user_network_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:costagram/widgets/post.dart';
@@ -25,18 +26,22 @@ class FeedScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             IconButton(
+              onPressed: () {
+                // userNetworkRepository.sendData();
+              },
               icon: ImageIcon(
                 AssetImage('assets/images/actionbar_camera.png'),
                 color: Colors.black87,
               ),
-              onPressed: null,
             ),
             IconButton(
+              onPressed: () {
+                // userNetworkRepository.getData();
+              },
               icon: ImageIcon(
-                AssetImage('assets/images/actionbar_camera.png'),
+                AssetImage('assets/images/direct_message.png'),
                 color: Colors.black87,
               ),
-              onPressed: null,
             )
           ],
         ),
