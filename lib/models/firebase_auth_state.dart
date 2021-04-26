@@ -7,7 +7,6 @@ class FirebaseAuthState extends ChangeNotifier {
   FirebaseAuthStatus _firebaseAuthStatus = FirebaseAuthStatus.progress;
   FirebaseAuth _firebaseAuth =  FirebaseAuth.instance;
   FirebaseUser _firebaseUser;
-  // FacebookLogin _facebookLogin;
 
   void watchAuthChange() {
     _firebaseAuth.onAuthStateChanged.listen((firebaseUser) {
@@ -62,10 +61,10 @@ class FirebaseAuthState extends ChangeNotifier {
     BuildContext context, {
     @required String email,
     @required String password
-  }){
+  }) async {
     changeFirebaseAuthStatus(FirebaseAuthStatus.progress);
 
-    _firebaseAuth
+    AuthResult authResult = await _firebaseAuth
       .signInWithEmailAndPassword(email: email.trim(), password: password.trim())
       .catchError((error) {
       print(error);
@@ -95,6 +94,12 @@ class FirebaseAuthState extends ChangeNotifier {
       SnackBar snackBar = SnackBar(content: Text(_message));
       Scaffold.of(context).showSnackBar(snackBar);
     });
+
+    _firebaseUser = authResult.user;
+    if(_firebaseUser == null){
+      SnackBar snackBar = SnackBar(content: Text("Please try again later."));
+      Scaffold.of(context).showSnackBar(snackBar);
+    } 
   }
 
   void signOut() async {
@@ -103,9 +108,6 @@ class FirebaseAuthState extends ChangeNotifier {
     if(_firebaseUser != null) {
       _firebaseUser = null;
       await _firebaseAuth.signOut();
-      // if(await _facebookLogin.isLoggedIn){
-      //   await _facebookLogin.logOut();
-      // }
     }
     notifyListeners();
   }
@@ -124,38 +126,6 @@ class FirebaseAuthState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // void loginWithFacebook(BuildContext context) async {
-  //   if(_facebookLogin == null)
-  //   final _facebookLogin = FacebookLogin();
-  //   final result = await _facebookLogin.logIn(['email']);
-  //
-  //   switch(result.status) {
-  //     case FacebookLoginStatus.loggedIn:
-  //       _handleFacebookTokenWithFirebase(context, result.accessToken.token);
-  //       break;
-  //     case FacebookLoginStatus.cnacelledByUser:
-  //       simpleSnackbar(context, 'User cancel facebook sign in');
-  //       break;
-  //     case FacebookLoginStatus.error:
-  //       simpleSnackbar(context, 'facebook login error');
-  //       _facebookLogin.logOut();
-  //       break;
-  //   }
-  // }
-  //
-  // void _handleFacebookTokenWithFirebase(BuildContext context, String token) async {
-  //   final AuthCredential credential = FacebookAuthProvider.getCredential(accessToken: token);
-  //
-  //   final AuthResult authResult = await _firebaseAuth.signInWithCredential(credential);
-  //   final FirebaseUser user = authResult.user;
-  //
-  //   if(user == null) {
-  //     simpleSnackbar(context, "페북 로그인이 실패. 나중에 시도해주세요.");
-  //   } else {
-  //     _firebaseUser = user;
-  //   }
-  //   notifyListeners();
-  // }
 
   FirebaseAuthStatus get firebaseAuthStatus=>_firebaseAuthStatus;
   FirebaseUser get firebaseUser=>_firebaseUser;

@@ -1,7 +1,9 @@
 import 'package:costagram/models/repo/user_network_repository.dart';
+import 'package:costagram/models/user_model_state.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:costagram/widgets/post.dart';
+import 'package:provider/provider.dart';
 
 class FeedScreen extends StatelessWidget {
   @override

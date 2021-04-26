@@ -270,10 +270,13 @@ class _ProfileBodyState extends State<ProfileBody> with SingleTickerProviderStat
   }
 
   Widget _username(BuildContext context){
+    UserModelState userModelState = Provider.of<UserModelState>(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: common_gap),
       child: Text(
-          Provider.of<UserModelState>(context).userModel.username,
+        userModelState == null || userModelState.userModel == null
+          ? ""
+          : userModelState.userModel.username,
           style: TextStyle(fontWeight: FontWeight.bold)
       ),
     );
