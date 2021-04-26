@@ -1,4 +1,4 @@
-package com.daisy.flutter_app
+package com.daisy.costagram
 
 import io.flutter.embedding.android.FlutterActivity
 
