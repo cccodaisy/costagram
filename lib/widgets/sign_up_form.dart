@@ -1,7 +1,9 @@
 import 'package:costagram/constants/auth_input_decor.dart';
 import 'package:costagram/constants/common_size.dart';
+import 'package:costagram/models/firebase_auth_state.dart';
 import 'package:costagram/widgets/or_divider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../home_page.dart';
 
@@ -111,11 +113,9 @@ class _SignUpFormState extends State<SignUpForm> {
       onPressed: () {
         if(_formKey.currentState.validate()){
           print('Validation success!');
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => HomePage()
-            )
-          );
+          Provider
+            .of<FirebaseAuthState>(context, listen: false)
+            .registerUser(email: _emailController.text, password: _pwController.text);
         }
       },
       child: Text(
