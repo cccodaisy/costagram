@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:costagram/constants/common_size.dart';
 import 'package:costagram/constants/screen_size.dart';
+import 'package:costagram/models/user_model_state.dart';
 import 'package:costagram/screens/profile_screen.dart';
 import 'package:costagram/widgets/rounded_avatar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProfileBody extends StatefulWidget {
 
@@ -84,7 +86,7 @@ class _ProfileBodyState extends State<ProfileBody> with SingleTickerProviderStat
                         )
                       ],
                     ),
-                    _username(),
+                    _username(context),
                     _userBio(),
                     _editProfileBtn(),
                     _tabButtons(),
@@ -267,11 +269,11 @@ class _ProfileBodyState extends State<ProfileBody> with SingleTickerProviderStat
     );
   }
 
-  Widget _username(){
+  Widget _username(BuildContext context){
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: common_gap),
       child: Text(
-          'username',
+          Provider.of<UserModelState>(context).userModel.username,
           style: TextStyle(fontWeight: FontWeight.bold)
       ),
     );

@@ -1,11 +1,10 @@
 import 'package:costagram/models/repo/user_network_repository.dart';
-import 'package:costagram/utils/simple_snackbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class FirebaseAuthState extends ChangeNotifier {
-  FirebaseAuthStatus _firebaseAuthStatus = FirebaseAuthStatus.signin;
+  FirebaseAuthStatus _firebaseAuthStatus = FirebaseAuthStatus.progress;
   FirebaseAuth _firebaseAuth =  FirebaseAuth.instance;
   FirebaseUser _firebaseUser;
   // FacebookLogin _facebookLogin;
@@ -47,13 +46,14 @@ class FirebaseAuthState extends ChangeNotifier {
       Scaffold.of(context).showSnackBar(snackBar);
     });
 
+    // firebase user 가져오는 부분
     _firebaseUser = authResult.user;
     if(_firebaseUser == null){
       SnackBar snackBar = SnackBar(content: Text("Please try again later."));
       Scaffold.of(context).showSnackBar(snackBar);
     } else {
       await userNetworkRepository.attemptCreateUser(
-          userKey: _firebaseUser.uid, email: _firebaseUser.email
+        userKey: _firebaseUser.uid, email: _firebaseUser.email
       );
     }
   }

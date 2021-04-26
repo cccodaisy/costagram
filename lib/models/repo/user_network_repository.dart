@@ -8,7 +8,7 @@ class UserNetworkRepository with Transformers {
     final DocumentReference userRef = Firestore.instance.collection(COLLECTION_USERS).document(userKey);
 
     DocumentSnapshot snapshot = await userRef.get();
-    if(snapshot.exists){
+    if(!snapshot.exists){
       return userRef.setData(UserModel.getMapForCreateUser(email));
     }
   }

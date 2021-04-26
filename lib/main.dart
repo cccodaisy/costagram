@@ -21,40 +21,40 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     _firebaseAuthState.watchAuthChange();
     return MultiProvider(
-        providers: [
-          ChangeNotifierProvider<FirebaseAuthState>.value(
-          value: _firebaseAuthState),
-          ChangeNotifierProvider<UserModelState>(
-            create: (_) => UserModelState(),
-          ),
-        ],
-        child: MaterialApp(
-          home: Consumer<FirebaseAuthState>(
-            builder: (BuildContext context, FirebaseAuthState firebaseAuthState, Widget child){
-              switch (firebaseAuthState.firebaseAuthStatus) {
-                case FirebaseAuthStatus.signout:
-                  _currentWidget = AuthScreen();
-                  break;
-                case FirebaseAuthStatus.signin:
-                  userNetworkRepository
-                      .getUserModelStream(firebaseAuthState.firebaseUser.uid)
-                      .listen((userModel) {
-                        Provider.of<UserModelState>(context).userModel = userModel;
-                  })
-                  _currentWidget = HomePage();
-                  break;
-                default:
-                  _currentWidget = MyProgressIndicator();
-              }
-              return AnimatedSwitcher(
-                duration: Duration(milliseconds: 300),
-                child: _currentWidget,
-              );
-            },
-          ),
-        theme: ThemeData(primarySwatch: white),
+      providers: [
+        ChangeNotifierProvider<FirebaseAuthState>.value(
+          value: _firebaseAuthState
         ),
-      )
+        ChangeNotifierProvider<UserModelState>(
+          create: (_) => UserModelState(),
+        ),
+      ],
+      child: MaterialApp(
+        home: Consumer<FirebaseAuthState>(
+          builder: (BuildContext context, FirebaseAuthState firebaseAuthState, Widget child){
+            switch (firebaseAuthState.firebaseAuthStatus) {
+              case FirebaseAuthStatus.signout:
+                _currentWidget = AuthScreen();
+                break;
+              case FirebaseAuthStatus.signin:
+                userNetworkRepository
+                    .getUserModelStream(firebaseAuthState.firebaseUser.uid)
+                    .listen((userModel) {
+                  Provider.of<UserModelState>(context, listen: false).userModel = userModel;
+                });
+                _currentWidget = HomePage();
+                break;
+              default:
+                _currentWidget = MyProgressIndicator();
+            }
+            return AnimatedSwitcher(
+              duration: Duration(milliseconds: 300),
+              child: _currentWidget,
+            );
+          },
+        ),
+      theme: ThemeData(primarySwatch: white),
+      ),
     );
   }
 }

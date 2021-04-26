@@ -5,8 +5,8 @@ import 'package:costagram/models/firestore/user_model.dart';
 
 class Transformers {
   final toUser = StreamTransformer<DocumentSnapshot, UserModel>.fromHandlers(
-    handleData: (snapshot, sink) async {
-      sink.add(UserModel.fromSnapShot(snapshot));
-    }
+      handleData: (snapshot, sink) async {
+        sink.add(UserModel.fromSnapshot(snapshot));
+      }
   );
 }

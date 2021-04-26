@@ -27,7 +27,6 @@ class FeedScreen extends StatelessWidget {
           children: <Widget>[
             IconButton(
               onPressed: () {
-                // userNetworkRepository.sendData();
               },
               icon: ImageIcon(
                 AssetImage('assets/images/actionbar_camera.png'),
@@ -36,7 +35,6 @@ class FeedScreen extends StatelessWidget {
             ),
             IconButton(
               onPressed: () {
-                // userNetworkRepository.getData();
               },
               icon: ImageIcon(
                 AssetImage('assets/images/direct_message.png'),

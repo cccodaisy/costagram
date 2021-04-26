@@ -21,7 +21,7 @@ class UserModel {
     followings = map[KEY_FOLLOWINGS],
     myPosts = map[KEY_MYPOSTS];
 
-  UserModel.fromSnapShot(DocumentSnapshot snapshot)
+  UserModel.fromSnapshot(DocumentSnapshot snapshot)
   : this.fromMap(
     snapshot.data,
     snapshot.documentID,
