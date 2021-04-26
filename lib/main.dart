@@ -1,4 +1,6 @@
 import 'package:costagram/models/firebase_auth_state.dart';
+import 'package:costagram/models/repo/user_network_repository.dart';
+import 'package:costagram/models/user_model_state.dart';
 import 'package:costagram/screens/auth_screen.dart';
 import 'package:costagram/widgets/my_progress_indicator.dart';
 import 'package:flutter/material.dart';
@@ -18,28 +20,40 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _firebaseAuthState.watchAuthChange();
-    return ChangeNotifierProvider<FirebaseAuthState>.value(
-      value: _firebaseAuthState,
-      child: MaterialApp(
-        home: Consumer<FirebaseAuthState>(
-          builder: (BuildContext context, FirebaseAuthState firebaseAuthState, Widget child){
-            switch (firebaseAuthState.firebaseAuthStatus) {
-              case FirebaseAuthStatus.signout:
-                _currentWidget = AuthScreen();
-                break;
-              case FirebaseAuthStatus.signin:
-                _currentWidget = HomePage();
-                break;
-              default:
-                _currentWidget = MyProgressIndicator();
-            }
-            return AnimatedSwitcher(
-              duration: Duration(milliseconds: 300),
-              child: _currentWidget,
-            );
-          },
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider<FirebaseAuthState>.value(
+          value: _firebaseAuthState),
+          ChangeNotifierProvider<UserModelState>(
+            create: (_) => UserModelState(),
+          ),
+        ],
+        child: MaterialApp(
+          home: Consumer<FirebaseAuthState>(
+            builder: (BuildContext context, FirebaseAuthState firebaseAuthState, Widget child){
+              switch (firebaseAuthState.firebaseAuthStatus) {
+                case FirebaseAuthStatus.signout:
+                  _currentWidget = AuthScreen();
+                  break;
+                case FirebaseAuthStatus.signin:
+                  userNetworkRepository
+                      .getUserModelStream(firebaseAuthState.firebaseUser.uid)
+                      .listen((userModel) {
+                        Provider.of<UserModelState>(context).userModel = userModel;
+                  })
+                  _currentWidget = HomePage();
+                  break;
+                default:
+                  _currentWidget = MyProgressIndicator();
+              }
+              return AnimatedSwitcher(
+                duration: Duration(milliseconds: 300),
+                child: _currentWidget,
+              );
+            },
+          ),
+        theme: ThemeData(primarySwatch: white),
         ),
-      theme: ThemeData(primarySwatch: white),
       )
     );
   }
