@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:costagram/constants/common_size.dart';
 import 'package:costagram/constants/screen_size.dart';
+import 'package:costagram/models/repo/image_network_repository.dart';
 import 'package:costagram/widgets/comment.dart';
 import 'package:costagram/widgets/my_progress_indicator.dart';
 import 'package:costagram/widgets/rounded_avatar.dart';
@@ -102,24 +103,34 @@ class Post extends StatelessWidget {
     );
   }
 
-  CachedNetworkImage _postImage() {
-    return CachedNetworkImage(
-      imageUrl: "https://picsum.photos/id/$index/200/200",
-      placeholder: (BuildContext context, String url) {
-        return MyProgressIndicator(
-            containerSize: size.width
+  Widget _postImage() {
+
+    Widget progress = MyProgressIndicator(
+      containerSize: size.width,
+    );
+    return FutureBuilder<dynamic>(
+      future: imageNetworkRepository.getPostImageUrl("1619504631739_6H0p7BhDgROgBNMEg6ZUjQgYdfH3"),
+      builder: (context, snapshot) {
+        if(snapshot.hasData)
+        return CachedNetworkImage(
+          imageUrl: snapshot.data.toString(),
+          placeholder: (BuildContext context, String url) {
+            return progress;
+          },
+          imageBuilder: (BuildContext context, ImageProvider imageProvider) {
+            return AspectRatio(
+              aspectRatio: 1,
+              child: Container(
+                decoration: BoxDecoration(
+                    image:
+                    DecorationImage(image: imageProvider, fit: BoxFit.cover)),
+              ),
+            );
+          },
         );
-      },
-      imageBuilder: (BuildContext context, ImageProvider imageProvider) {
-        return AspectRatio(
-          aspectRatio: 1,
-          child: Container(
-            decoration: BoxDecoration(
-                image:
-                DecorationImage(image: imageProvider, fit: BoxFit.cover)),
-          ),
-        );
-      },
+        else
+          return progress;
+      }
     );
   }
 }
