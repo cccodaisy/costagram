@@ -2,6 +2,8 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:costagram/models/gallery_state.dart';
+import 'package:costagram/models/repo/helper/generate_post_key.dart';
+import 'package:costagram/models/user_model_state.dart';
 import 'package:costagram/screens/share_post_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:local_image_provider/device_image.dart';
@@ -33,16 +35,16 @@ class _MyGalleryState extends State<MyGallery> {
       .map((localImage) => InkWell(
         onTap: () async {
           Uint8List bytes= await localImageToBytes(galleryState, localImage);
-          final String timeInMilli = DateTime.now().millisecondsSinceEpoch.toString();
+          final String postKey = getNewPostKey(Provider.of<UserModelState>(context, listen: false).userModel);
 
           try{
             final path = join(
                 (await getTemporaryDirectory()).path,
-                '$timeInMilli.png'
+                '$postKey.png'
             );
             File imageFile = File(path)..writeAsBytesSync(bytes);
             Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => SharePostScreen(imageFile))
+                MaterialPageRoute(builder: (_) => SharePostScreen(imageFile, postKey: postKey,))
             );
           }catch(e){
           }

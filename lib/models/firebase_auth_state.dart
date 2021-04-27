@@ -45,6 +45,7 @@ class FirebaseAuthState extends ChangeNotifier {
       Scaffold.of(context).showSnackBar(snackBar);
     });
 
+    print(authResult.user);
     // firebase user 가져오는 부분
     _firebaseUser = authResult.user;
     if(_firebaseUser == null){

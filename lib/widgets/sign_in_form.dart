@@ -4,8 +4,6 @@ import 'package:costagram/models/firebase_auth_state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../home_page.dart';
-
 class SignInForm extends StatefulWidget {
   @override
   _SignInFormState createState() => _SignInFormState();
