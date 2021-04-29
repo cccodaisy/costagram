@@ -41,7 +41,7 @@ class PostNetworkRepository with Transformers {
       .transform(toPosts);
   }
 
-  Stream<List<PostModel>> fetchPostsFromAllFollowings(List<dynamic> followings) {
+  Stream<List<PostModel>> fetchPostsFromAllFollowers(List<dynamic> followings) {
     final CollectionReference collectionReference = Firestore.instance
       .collection(COLLECTION_POSTS);
     List<Stream<List<PostModel>>> streams = [];
@@ -51,7 +51,7 @@ class PostNetworkRepository with Transformers {
         collectionReference
         .where(KEY_USERKEY, isEqualTo: following)
         .snapshots()
-        .transform(toPosts);
+        .transform(toPosts)
       );
     }
 
