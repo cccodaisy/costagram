@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 
 class ImageNetworkRepository {
   // 네트워크에서 사이즈 줄여가지고 가져옴 속도 개선
-  Future<void> uploadImageNCreateNewPost(File originImage, {@required String postKey}) async {
+  Future<StorageTaskSnapshot> uploadImage(File originImage, {@required String postKey}) async {
     try{
       final File resized = await compute(getResizedImage, originImage);
 

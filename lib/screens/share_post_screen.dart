@@ -1,20 +1,31 @@
 import 'package:costagram/constants/common_size.dart';
 import 'package:costagram/constants/screen_size.dart';
+import 'package:costagram/models/firestore/post_model.dart';
+import 'package:costagram/models/firestore/user_model.dart';
 import 'package:costagram/models/repo/image_network_repository.dart';
+import 'package:costagram/models/repo/post_network_repository.dart';
+import 'package:costagram/models/user_model_state.dart';
 import 'package:costagram/widgets/my_progress_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 
 import 'package:flutter_tags/flutter_tags.dart';
+import 'package:provider/provider.dart';
 
-class SharePostScreen extends StatelessWidget {
+class SharePostScreen extends StatefulWidget {
 
   final File imageFile;
   final String postKey;
 
   SharePostScreen(this.imageFile, {Key key, @required this.postKey}) : super (key: key);
-  
+
+  @override
+  _SharePostScreenState createState() => _SharePostScreenState();
+}
+
+class _SharePostScreenState extends State<SharePostScreen> {
+  TextEditingController _textEditingController = TextEditingController();
   List<String> _tagItems = [
     "approval",
     "pigeon",
@@ -33,22 +44,19 @@ class SharePostScreen extends StatelessWidget {
   ];
 
   @override
+  void dispose() {
+    _textEditingController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('New Post'),
         actions: <Widget>[
           FlatButton(
-            onPressed: () async {
-              showModalBottomSheet(
-                context: context,
-                builder:    (_) => MyProgressIndicator(),
-                isDismissible: false,
-                enableDrag: false
-              );
-              await imageNetworkRepository.uploadImageNCreateNewPost(imageFile, postKey: postKey);
-              Navigator.of(context).pop();
-            },
+            onPressed: sharePostProcedure,
             child: Text(
               "Share",
               textScaleFactor: 1.4,
@@ -78,6 +86,37 @@ class SharePostScreen extends StatelessWidget {
         ],
       )
     );
+  }
+
+  void sharePostProcedure() async {
+    showModalBottomSheet(
+        context: context,
+        builder: (_) => MyProgressIndicator(),
+        isDismissible: false,
+        enableDrag: false
+    );
+    await imageNetworkRepository.uploadImage(
+        widget.imageFile,
+        postKey: widget.postKey
+    );
+
+    UserModel usermodel = Provider.of<UserModelState>(context, listen: false).userModel;
+    await postNetworkRepository.createNewPost(
+        widget.postKey,
+        PostModel.getMapForCreatePost(
+            userKey: usermodel.userKey,
+            username: usermodel.username,
+            caption: _textEditingController.text
+        )
+    );
+
+    String postImgLink = await imageNetworkRepository.getPostImageUrl(widget.postKey);
+    await postNetworkRepository.updatePostImageUrl(
+        postKey: widget.postKey,
+        postImg: postImgLink
+    );
+    Navigator.of(context).pop(); // dismiss progress(Modal Bottom Sheet)
+    Navigator.of(context).pop();
   }
 
   Tags _tags() {
@@ -129,12 +168,14 @@ class SharePostScreen extends StatelessWidget {
             horizontal: common_gap
           ),
           leading: Image.file(
-            imageFile,
+            widget.imageFile,
             width: size.width / 6,
             height: size.height / 6,
             fit: BoxFit.cover,
           ),
           title: TextField(
+            controller: _textEditingController,
+            autofocus: true,
             decoration: InputDecoration(
               hintText: "Write a caption...",
               border: InputBorder.none
