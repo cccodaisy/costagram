@@ -12,13 +12,21 @@ class UserModelState extends ChangeNotifier {
     notifyListeners();
   }
 
-  set currentStreamSub(StreamSubscription<UserModel> currentStreamSub) => _currentStreamSub = currentStreamSub;
+  set currentStreamSub(StreamSubscription<UserModel> currentStreamSub) =>
+      _currentStreamSub = currentStreamSub;
 
   clear() {
     if(_currentStreamSub != null)
       _currentStreamSub.cancel();
     _currentStreamSub = null;
     _userModel = null;
+  }
+
+  bool amIFollowingThisUser(String otherUserKey) {
+    if(_userModel == null || _userModel.followings == null || _userModel.followings.isEmpty)
+      return false;
+
+    return _userModel.followings.contains(otherUserKey);
   }
 
 
