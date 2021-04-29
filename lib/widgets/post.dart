@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:costagram/constants/common_size.dart';
 import 'package:costagram/constants/screen_size.dart';
+import 'package:costagram/models/firestore/post_model.dart';
 import 'package:costagram/models/repo/image_network_repository.dart';
 import 'package:costagram/widgets/comment.dart';
 import 'package:costagram/widgets/my_progress_indicator.dart';
@@ -8,9 +9,9 @@ import 'package:costagram/widgets/rounded_avatar.dart';
 import 'package:flutter/material.dart';
 
 class Post extends StatelessWidget {
-  final int index;
+  final PostModel postModel;
 
-  Post(this.index, {
+  Post(this.postModel, {
     Key key,
   }) : super(key: key);
 
@@ -28,7 +29,22 @@ class Post extends StatelessWidget {
         _postActions(),
         _postLikes(),
         _postCaption(),
+        _lastComment(),
       ],
+    );
+  }
+
+  Widget _lastComment() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+          horizontal: common_gap,
+          vertical: common_xxs_gap
+      ),
+      child: Comment(
+        showImage: false,
+        username: postModel.lastCommentor,
+        text: postModel.lastComment,
+      ),
     );
   }
 
@@ -40,8 +56,8 @@ class Post extends StatelessWidget {
       ),
       child: Comment(
         showImage: false,
-        username: "testingUser",
-        text: "I have money",
+        username: postModel.username,
+        text: postModel.caption,
       ),
     );
   }
@@ -50,7 +66,7 @@ class Post extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(left: common_gap),
       child: Text(
-        '12000 likes',
+        '${postModel.numofLikes == null ? 0 : postModel.numofLikes.length} likes',
         style: TextStyle(fontWeight: FontWeight.bold),
       ),
     );
@@ -91,7 +107,7 @@ class Post extends StatelessWidget {
           padding: const EdgeInsets.all(common_xxs_gap),
           child: RoundedAvatar(),
         ),
-        Expanded(child: Text('username')),
+        Expanded(child: Text(postModel.username)),
         IconButton(
           onPressed: null,
           icon: Icon(
@@ -108,29 +124,22 @@ class Post extends StatelessWidget {
     Widget progress = MyProgressIndicator(
       containerSize: size.width,
     );
-    return FutureBuilder<dynamic>(
-      future: imageNetworkRepository.getPostImageUrl("1619504631739_6H0p7BhDgROgBNMEg6ZUjQgYdfH3"),
-      builder: (context, snapshot) {
-        if(snapshot.hasData)
-        return CachedNetworkImage(
-          imageUrl: snapshot.data.toString(),
-          placeholder: (BuildContext context, String url) {
-            return progress;
-          },
-          imageBuilder: (BuildContext context, ImageProvider imageProvider) {
-            return AspectRatio(
-              aspectRatio: 1,
-              child: Container(
-                decoration: BoxDecoration(
-                    image:
-                    DecorationImage(image: imageProvider, fit: BoxFit.cover)),
-              ),
-            );
-          },
+
+    return CachedNetworkImage(
+      imageUrl: postModel.postImg,
+      placeholder: (BuildContext context, String url) {
+        return progress;
+      },
+      imageBuilder: (BuildContext context, ImageProvider imageProvider) {
+        return AspectRatio(
+          aspectRatio: 1,
+          child: Container(
+            decoration: BoxDecoration(
+                image:
+                DecorationImage(image: imageProvider, fit: BoxFit.cover)),
+          ),
         );
-        else
-          return progress;
-      }
+      },
     );
   }
 }

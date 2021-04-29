@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:costagram/constants/firestore_keys.dart';
 import 'package:costagram/models/firestore/post_model.dart';
 import 'package:costagram/models/repo/helper/transformers.dart';
+import 'package:rxdart/rxdart.dart';
 
 class PostNetworkRepository with Transformers {
   Future<Map<String, dynamic>> createNewPost(String postKey, Map<String, dynamic> postData) async {
@@ -39,6 +40,26 @@ class PostNetworkRepository with Transformers {
       .snapshots()
       .transform(toPosts);
   }
+
+  Stream<List<PostModel>> fetchPostsFromAllFollowings(List<dynamic> followings) {
+    final CollectionReference collectionReference = Firestore.instance
+      .collection(COLLECTION_POSTS);
+    List<Stream<List<PostModel>>> streams = [];
+
+    for (final following in followings) {
+      streams.add(
+        collectionReference
+        .where(KEY_USERKEY, isEqualTo: following)
+        .snapshots()
+        .transform(toPosts);
+      );
+    }
+
+    return CombineLatestStream.list<List<PostModel>>(streams)
+        .transform(combineListOfPosts)
+        .transform(latestToTop);
+  }
+
 }
 
 PostNetworkRepository postNetworkRepository = PostNetworkRepository();
