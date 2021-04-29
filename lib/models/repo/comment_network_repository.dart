@@ -34,7 +34,7 @@ class CommentNetworkRepository with Transformers{
         .document(postKey)
         .collection(COLLECTION_COMMENTS)
         .orderBy(KEY_COMMENTTIME)
-        .snapshot()
+        .snapshots()
         .transform(toComments);
   }
 }

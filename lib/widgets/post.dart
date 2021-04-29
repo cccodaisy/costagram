@@ -3,6 +3,7 @@ import 'package:costagram/constants/common_size.dart';
 import 'package:costagram/constants/screen_size.dart';
 import 'package:costagram/models/firestore/post_model.dart';
 import 'package:costagram/models/repo/image_network_repository.dart';
+import 'package:costagram/screens/comment_screen.dart';
 import 'package:costagram/widgets/comment.dart';
 import 'package:costagram/widgets/my_progress_indicator.dart';
 import 'package:costagram/widgets/rounded_avatar.dart';
@@ -26,7 +27,7 @@ class Post extends StatelessWidget {
       children: [
         _postHeader(),
         _postImage(),
-        _postActions(),
+        _postActions(context),
         _postLikes(),
         _postCaption(),
         _lastComment(),
@@ -72,7 +73,7 @@ class Post extends StatelessWidget {
     );
   }
 
-  Row _postActions() {
+  Row _postActions(BuildContext context) {
     return Row(
       children: <Widget>[
         IconButton(
@@ -82,7 +83,13 @@ class Post extends StatelessWidget {
         ),
         IconButton(
           icon: ImageIcon(AssetImage('assets/images/comment.png')),
-          onPressed: null,
+          onPressed: (){
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (BuildContext build) {
+                  return CommentScreen();
+                }
+            ));
+          },
           color: Colors.black87,
         ),
         IconButton(
