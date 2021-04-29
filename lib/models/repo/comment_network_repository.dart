@@ -9,8 +9,7 @@ class CommentNetworkRepository with Transformers{
       .collection(COLLECTION_POSTS)
       .document(postKey);
     final DocumentSnapshot postSnapshot = await postRef.get();
-    final DocumentReference commentRef = Firestore.instance
-      .collection(COLLECTION_POSTS)
+    final DocumentReference commentRef = postRef.collection(COLLECTION_COMMENTS)
       .document();
 
     return Firestore.instance.runTransaction((tx) async{
@@ -30,11 +29,13 @@ class CommentNetworkRepository with Transformers{
 
   Stream<List<CommentModel>> fetchAllComments(String postKey) {
     return Firestore.instance
-        .collection(COLLECTION_POSTS)
-        .document(postKey)
-        .collection(COLLECTION_COMMENTS)
-        .orderBy(KEY_COMMENTTIME)
-        .snapshots()
-        .transform(toComments);
+      .collection(COLLECTION_POSTS)
+      .document(postKey)
+      .collection(COLLECTION_COMMENTS)
+      .orderBy(KEY_COMMENTTIME)
+      .snapshots()
+      .transform(toComments);
   }
 }
+
+CommentNetworkRepository commentNetworkRepository = CommentNetworkRepository();

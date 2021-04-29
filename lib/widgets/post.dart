@@ -86,7 +86,7 @@ class Post extends StatelessWidget {
           onPressed: (){
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (BuildContext build) {
-                  return CommentScreen();
+                  return CommentScreen(postModel.postKey);
                 }
             ));
           },
