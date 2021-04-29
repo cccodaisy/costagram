@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:costagram/models/firestore/post_model.dart';
 import 'package:costagram/models/firestore/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -24,4 +25,14 @@ class Transformers {
       }
   );
 
+  final toPosts = StreamTransformer<QuerySnapshot, List<PostModel>>.fromHandlers(
+      handleData: (snapshot, sink) async {
+        List<PostModel> posts = [];
+
+        snapshot.documents.forEach((documentSnapshot) {
+          posts.add(PostModel.fromSnapshot(documentSnapshot));
+        });
+        sink.add(posts);
+      }
+  );
 }
