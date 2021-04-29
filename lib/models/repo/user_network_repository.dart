@@ -20,6 +20,64 @@ class UserNetworkRepository with Transformers {
       .snapshots()
       .transform(toUser);
   }
+
+  Stream<List<UserModel>> getAllUsersWithoutMe(){
+    return Firestore.instance
+      .collection(COLLECTION_USERS)
+      .snapshots()
+      .transform(toUsersExceptMe);
+  }
+  
+  Future<void> followUser({String myUserKey, String otherUserKey}) async {
+    final DocumentReference myUserRef = Firestore.instance
+        .collection(COLLECTION_USERS)
+        .document(myUserKey);
+    final DocumentSnapshot mySnapshot = await myUserRef.get();
+    final DocumentReference otherUserRef = Firestore.instance
+      .collection(COLLECTION_USERS)
+    .document(otherUserKey);
+    final DocumentSnapshot otherSnapshot = await otherUserRef.get();
+    
+    Firestore.instance.runTransaction((tx) async {
+      if(mySnapshot.exists && otherSnapshot.exists){
+        await tx.update(
+          myUserRef,
+          {KEY_FOLLOWINGS: FieldValue.arrayUnion([otherUserKey])}
+        );
+        int currentFollowers = otherSnapshot.data[KEY_FOLLOWINGS];
+        await tx.update(
+          otherUserRef,
+          {KEY_FOLLOWINGS: currentFollowers + 1}
+        );
+      }
+    });
+  }
+
+
+  Future<void> unFollowUser({String myUserKey, String otherUserKey}) async {
+    final DocumentReference myUserRef = Firestore.instance
+        .collection(COLLECTION_USERS)
+        .document(myUserKey);
+    final DocumentSnapshot mySnapshot = await myUserRef.get();
+    final DocumentReference otherUserRef = Firestore.instance
+        .collection(COLLECTION_USERS)
+        .document(otherUserKey);
+    final DocumentSnapshot otherSnapshot = await otherUserRef.get();
+
+    Firestore.instance.runTransaction((tx) async {
+      if(mySnapshot.exists && otherSnapshot.exists){
+        await tx.update(
+            myUserRef,
+            {KEY_FOLLOWINGS: FieldValue.arrayRemove([otherUserKey])}
+        );
+        int currentFollowers = otherSnapshot.data[KEY_FOLLOWINGS];
+        await tx.update(
+            otherUserRef,
+            {KEY_FOLLOWINGS: currentFollowers - 1}
+        );
+      }
+    });
+  }
 }
 
 UserNetworkRepository userNetworkRepository = UserNetworkRepository();
