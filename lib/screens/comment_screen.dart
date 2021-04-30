@@ -25,6 +25,9 @@ class _CommentScreenState extends State<CommentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Comments"),
+      ),
       body: Form(
         key: _formKey,
         child: Column(
@@ -35,16 +38,19 @@ class _CommentScreenState extends State<CommentScreen> {
                 builder: (BuildContext context, List<CommentModel> comments, Widget child) {
                   return ListView.separated(
                     itemBuilder: (context, index) {
-                      return Comment(
-                        username: comments[index].username,
-                        text: comments[index].comment,
-                        dateTime: comments[index].commentTime,
-                        showImage: true,
+                      return Padding(
+                        padding: const EdgeInsets.all(common_xxs_gap),
+                        child: Comment(
+                          username: comments[index].username,
+                          text: comments[index].comment,
+                          dateTime: comments[index].commentTime,
+                          showImage: true,
+                        ),
                       );
                     },
                     separatorBuilder: (context, index) {
                       return SizedBox(
-                        height: common_xs_gap,
+                        height: common_xxs_gap,
                       );
                     },
                     itemCount: comments == null ? 0 : comments.length,
@@ -52,12 +58,18 @@ class _CommentScreenState extends State<CommentScreen> {
                 },
               ),
             )),
+            Divider(
+              height: 1,
+              thickness: 1,
+              color: Colors.grey[300],
+            ),
             Row(
               children: <Widget>[
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: common_gap),
+                    padding: const EdgeInsets.symmetric(horizontal: common_gap),
                     child: TextFormField(
+                      autofocus: true,
                       controller: _textEditingController,
                       cursorColor: Colors.black54,
                       decoration: InputDecoration(

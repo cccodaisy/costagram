@@ -6,7 +6,7 @@ class PostModel {
   final String userKey;
   final String username;
   final String postImg;
-  final List<dynamic> numofLikes;
+  final List<dynamic> numOfLikes;
   final String caption;
   final String lastCommentor;
   final String lastComment;
@@ -23,7 +23,7 @@ class PostModel {
         lastComment = map[KEY_LASTCOMMENT],
         lastCommentor = map[KEY_LASTCOMMENTOR],
         lastCommentTime = map[KEY_LASTCOMMENTTIME] == null ? DateTime.now() : (map[KEY_LASTCOMMENTTIME] as Timestamp).toDate(),
-        numofLikes = map[KEY_NUMOFLIKES],
+        numOfLikes = map[KEY_NUMOFLIKES],
         numOfComments = map[KEY_NUMOFCOMMENTS],
         postTime = map[KEY_POSTITME] == null ? DateTime.now() : (map[KEY_POSTITME] as Timestamp).toDate();
 
