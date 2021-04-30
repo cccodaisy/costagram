@@ -3,6 +3,7 @@ import 'package:costagram/models/repo/user_network_repository.dart';
 import 'package:costagram/models/user_model_state.dart';
 import 'package:costagram/screens/auth_screen.dart';
 import 'package:costagram/widgets/my_progress_indicator.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:costagram/home_page.dart';
 import 'package:costagram/constants/material_white.dart';
@@ -15,11 +16,40 @@ void main() {
 class MyApp extends StatelessWidget {
   FirebaseAuthState _firebaseAuthState = FirebaseAuthState();
   Widget _currentWidget;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     _firebaseAuthState.watchAuthChange();
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print("onMessage: $message");
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        print("onLaunch: $message");
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print("onResume: $message");
+      },
+      // onBackgroundMessage: myBackgroundMessageHandler,
+    );
+    _firebaseMessaging.requestNotificationPermissions(
+      const IosNotificationSettings(
+        sound: true,
+        badge: true,
+        alert: true,
+        provisional: true
+      )
+    );
+    _firebaseMessaging.onIosSettingsRegistered.listen(
+      (IosNotificationSettings settings) {
+      print("Setting registered: $settings");
+    });
+    _firebaseMessaging.getToken().then((String token) {
+      assert(token != null);
+      print("Push Messaging token: $token");
+    });
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<FirebaseAuthState>.value(

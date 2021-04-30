@@ -79,13 +79,9 @@ class _TakePhotoState extends State<TakePhoto> {
     final String postKey = getNewPostKey(Provider.of<UserModelState>(context, listen: false).userModel);
 
     try{
-      final path = join(
-        (await getTemporaryDirectory()).path,
-        '$postKey.png'
-      );
-      await cameraState.controller.takePicture(path);
+      XFile pictureTaken =  await cameraState.controller.takePicture();
 
-      File imageFile = File(path);
+      File imageFile = File(pictureTaken.path);
       Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => SharePostScreen(imageFile, postKey: postKey,))
       );
