@@ -24,7 +24,7 @@ final List<Story> stories = [
   ),
   Story(
     url:
-    'https://static.videezy.com/system/resources/previews/000/005/529/original/Reaviling_Sjusj%C3%B8en_Ski_Senter.mp4',
+    'https://img.thesaracen.com/banner/e129f8cac867ffb00c3d6a21d0263b89.mp4',
     media: MediaType.video,
     duration: const Duration(seconds: 0),
     user: user,
@@ -38,7 +38,7 @@ final List<Story> stories = [
   ),
   Story(
     url:
-    'https://static.videezy.com/system/resources/previews/000/007/536/original/rockybeach.mp4',
+    'https://img.thesaracen.com/banner/8037dea53c393341fd67fcbbd01500f9.mp4',
     media: MediaType.video,
     duration: const Duration(seconds: 0),
     user: user,

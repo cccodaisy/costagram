@@ -11,8 +11,9 @@ class StoryScreen extends StatefulWidget {
   _StoryScreenState createState() => _StoryScreenState();
 }
 
-class _StoryScreenState extends State<StoryScreen> {
+class _StoryScreenState extends State<StoryScreen> with SingleTickerProviderStateMixin {
   PageController _pageController;
+  AnimationController _animationController;
   VideoPlayerController _videoController;
   int _currentIndex = 0;
 
@@ -20,47 +21,64 @@ class _StoryScreenState extends State<StoryScreen> {
   void initState() {
     super.initState();
     _pageController = PageController();
+    _animationController = AnimationController(vsync: this);
     _videoController = VideoPlayerController.network(
-      widget.stories[2].url
+        widget.stories[2].url
     ) ..initialize().then((value) => setState(() {}));
     _videoController.play(); // play!
+
+    _animationController.addStatusListener((status) {
+      if(status == AnimationStatus.completed) {
+        _animationController.stop();
+        _animationController.reset();
+        setState(() {
+          if(_currentIndex + 1 < widget.stories.length){
+            _currentIndex += 1;
+            _loadStory(story: widget.stories[_currentIndex]);
+          } else {
+            _currentIndex = 0;
+            _loadStory(story: widget.stories[_currentIndex]);
+          }
+        });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final Story story = widget.stories[_currentIndex];
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: GestureDetector(
-        onTapDown: (details) => _onTapDown(details, story),
-        child: PageView.builder(
-          // physics: NeverScrollableScrollPhysics(),
-          controller: _pageController,
-          itemCount: widget.stories.length,
-          itemBuilder: (context, i) {
-            final Story story = widget.stories[i];
-            switch (story.media) {
-              case MediaType.image:
-                return CachedNetworkImage(
-                  imageUrl: story.url,
-                  fit: BoxFit.cover,
-                );
-              case MediaType.video:
-                if(_videoController != null && _videoController.value.initialized) {
-                  return FittedBox(
-                    fit: BoxFit.cover,
-                    child: SizedBox(
-                      width: _videoController.value.size.width,
-                      height: _videoController.value.size.height,
-                      child: VideoPlayer(_videoController),
-                    ),
-                  );
+        backgroundColor: Colors.black,
+        body: GestureDetector(
+          onTapDown: (details) => _onTapDown(details, story),
+          child: PageView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              controller: _pageController,
+              itemCount: widget.stories.length,
+              itemBuilder: (context, i) {
+                final Story story = widget.stories[i];
+                switch (story.media) {
+                  case MediaType.image:
+                    return CachedNetworkImage(
+                      imageUrl: story.url,
+                      fit: BoxFit.cover,
+                    );
+                  case MediaType.video:
+                    if(_videoController != null && _videoController.value.initialized) {
+                      return FittedBox(
+                        fit: BoxFit.cover,
+                        child: SizedBox(
+                          width: _videoController.value.size.width,
+                          height: _videoController.value.size.height,
+                          child: VideoPlayer(_videoController),
+                        ),
+                      );
+                    }
                 }
-            }
-            return const SizedBox.shrink();
-          }
-        ),
-      )
+                return const SizedBox.shrink();
+              }
+          ),
+        )
     );
   }
 
@@ -69,26 +87,62 @@ class _StoryScreenState extends State<StoryScreen> {
     final double dx = details.globalPosition.dx;
     if(dx < screenWidth / 3) {
       setState(() {
-        if(_currentIndex - 1 >= 0) {
+        if(_currentIndex -1 >= 0) {
           _currentIndex -= -1;
+          _loadStory(story: widget.stories[_currentIndex]);
         }
       });
     } else if (dx > 2 * screenWidth / 3) {
       setState(() {
         if(_currentIndex + 1 < widget.stories.length) {
           _currentIndex += 1;
+          _loadStory(story: widget.stories[_currentIndex]);
         } else {
           _currentIndex = 0;
+          _loadStory(story: widget.stories[_currentIndex]);
         }
       });
     } else {
       if(story.media == MediaType.video) {
         if(_videoController.value.isPlaying) {
           _videoController.pause();
+          _animationController.stop();
         } else {
           _videoController.play();
+          _animationController.forward();
         }
       }
+    }
+  }
+
+  void _loadStory({Story story, bool animateToPage = true}) {
+    _animationController.stop();
+    _animationController.reset();
+    switch(story.media) {
+      case MediaType.image:
+        _animationController.duration = story.duration;
+        _animationController.forward();
+        break;
+      case MediaType.video:
+        _videoController = null;
+        _videoController?.dispose();
+        _videoController = VideoPlayerController.network(story.url)
+          ..initialize().then((_) {
+            setState(() {});
+            if(_videoController.value.initialized) {
+              _animationController.duration = _videoController.value.duration;
+              _videoController.play();
+              _animationController.forward();
+            }
+          });
+        break;
+    }
+    if(animateToPage) {
+      _pageController.animateToPage(
+        _currentIndex,
+        duration: const Duration(milliseconds: 1),
+        curve: Curves.easeInOut,
+      );
     }
   }
 }
