@@ -45,6 +45,8 @@ dependencies:
   rxdart: ^0.24.1
   firebase_messaging: ^6.0.13
 
+  video_player: ^0.10.11+2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

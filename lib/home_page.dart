@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:app_settings/app_settings.dart';
+import 'package:costagram/data.dart';
 import 'package:costagram/models/user_model_state.dart';
 import 'package:costagram/screens/camera_screen.dart';
 import 'package:costagram/screens/profile_screen.dart';
@@ -8,7 +9,9 @@ import 'package:costagram/screens/feed_screen.dart';
 import 'package:costagram/constants/screen_size.dart';
 import 'package:costagram/screens/search_screen.dart';
 import 'package:costagram/widgets/my_progress_indicator.dart';
+import 'package:costagram/widgets/story_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
@@ -47,9 +50,7 @@ class _HomePageState extends State<HomePage> {
     Container(
       color: Colors.greenAccent,
     ),
-    Container(
-      color: Colors.deepPurpleAccent,
-    ),
+    StoryScreen(stories: stories),
     ProfileScreen(),
   ];
 
@@ -58,6 +59,7 @@ class _HomePageState extends State<HomePage> {
     if (size == null) size = MediaQuery
         .of(context)
         .size;
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
     return Scaffold(
       key: _key,
