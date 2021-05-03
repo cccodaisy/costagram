@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:costagram/models/story_model.dart';
+import 'package:costagram/widgets/animated_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -45,38 +46,71 @@ class _StoryScreenState extends State<StoryScreen> with SingleTickerProviderStat
   }
 
   @override
+  void dispose() {
+    _pageController.dispose();
+    _animationController.dispose();
+    _videoController?.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final Story story = widget.stories[_currentIndex];
     return Scaffold(
         backgroundColor: Colors.black,
         body: GestureDetector(
           onTapDown: (details) => _onTapDown(details, story),
-          child: PageView.builder(
-              physics: NeverScrollableScrollPhysics(),
-              controller: _pageController,
-              itemCount: widget.stories.length,
-              itemBuilder: (context, i) {
-                final Story story = widget.stories[i];
-                switch (story.media) {
-                  case MediaType.image:
-                    return CachedNetworkImage(
-                      imageUrl: story.url,
-                      fit: BoxFit.cover,
-                    );
-                  case MediaType.video:
-                    if(_videoController != null && _videoController.value.initialized) {
-                      return FittedBox(
-                        fit: BoxFit.cover,
-                        child: SizedBox(
-                          width: _videoController.value.size.width,
-                          height: _videoController.value.size.height,
-                          child: VideoPlayer(_videoController),
-                        ),
-                      );
+          child: Stack(
+            children: [
+              PageView.builder(
+                  physics: NeverScrollableScrollPhysics(),
+                  controller: _pageController,
+                  itemCount: widget.stories.length,
+                  itemBuilder: (context, i) {
+                    final Story story = widget.stories[i];
+                    switch (story.media) {
+                      case MediaType.image:
+                        return CachedNetworkImage(
+                          imageUrl: story.url,
+                          fit: BoxFit.cover,
+                        );
+                      case MediaType.video:
+                        if(_videoController != null && _videoController.value.initialized) {
+                          return FittedBox(
+                            fit: BoxFit.cover,
+                            child: SizedBox(
+                              width: _videoController.value.size.width,
+                              height: _videoController.value.size.height,
+                              child: VideoPlayer(_videoController),
+                            ),
+                          );
+                        }
                     }
-                }
-                return const SizedBox.shrink();
-              }
+                    return const SizedBox.shrink();
+                  }
+              ),
+              Positioned(
+                top: 40.0,
+                left: 10.0,
+                right: 10.0,
+                child: Row(
+                  children: widget.stories
+                      .asMap()
+                      .map((i, e) {
+                    return MapEntry(
+                        i,
+                        AnimatedBar(
+                          animationController: _animationController,
+                          position: i,
+                          currentIndex: _currentIndex,
+                        )
+                    );
+                  })
+                      .values
+                      .toList(),
+                ),
+              )
+            ],
           ),
         )
     );

@@ -9,7 +9,7 @@ import 'package:costagram/screens/feed_screen.dart';
 import 'package:costagram/constants/screen_size.dart';
 import 'package:costagram/screens/search_screen.dart';
 import 'package:costagram/widgets/my_progress_indicator.dart';
-import 'package:costagram/widgets/story_screen.dart';
+import 'package:costagram/screens/story_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
