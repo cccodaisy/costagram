@@ -5,8 +5,6 @@ import 'package:costagram/widgets/or_divider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../home_page.dart';
-
 class SignUpForm extends StatefulWidget {
   @override
   _SignUpFormState createState() => _SignUpFormState();

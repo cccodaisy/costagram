@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:costagram/models/story_model.dart';
 import 'package:costagram/widgets/animated_bar.dart';
+import 'package:costagram/widgets/user_info.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -93,21 +94,32 @@ class _StoryScreenState extends State<StoryScreen> with SingleTickerProviderStat
                 top: 40.0,
                 left: 10.0,
                 right: 10.0,
-                child: Row(
-                  children: widget.stories
-                      .asMap()
-                      .map((i, e) {
-                    return MapEntry(
-                        i,
-                        AnimatedBar(
-                          animationController: _animationController,
-                          position: i,
-                          currentIndex: _currentIndex,
-                        )
-                    );
-                  })
-                      .values
-                      .toList(),
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      children: widget.stories
+                          .asMap()
+                          .map((i, e) {
+                        return MapEntry(
+                            i,
+                            AnimatedBar(
+                              animationController: _animationController,
+                              position: i,
+                              currentIndex: _currentIndex,
+                            )
+                        );
+                      })
+                          .values
+                          .toList(),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 1.5,
+                        vertical: 10.0,
+                      ),
+                      child: UserInfo(user: story.user),
+                    ),
+                  ],
                 ),
               )
             ],
@@ -122,7 +134,7 @@ class _StoryScreenState extends State<StoryScreen> with SingleTickerProviderStat
     if(dx < screenWidth / 3) {
       setState(() {
         if(_currentIndex -1 >= 0) {
-          _currentIndex -= -1;
+          _currentIndex -= 1;
           _loadStory(story: widget.stories[_currentIndex]);
         }
       });

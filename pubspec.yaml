@@ -46,6 +46,8 @@ dependencies:
   firebase_messaging: ^6.0.13
 
   video_player: ^0.10.11+2
+  flutter_blurhash: ^0.6.0
+  inview_notifier_list: 
 
 dev_dependencies:
   flutter_test:

@@ -37,15 +37,16 @@ class _HomePageState extends State<HomePage> {
   GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
 
   List<Widget> _screens = <Widget>[
-    Consumer<UserModelState>(builder: (BuildContext contex, UserModelState userModelState, Widget child) {
-      if(userModelState == null
-      || userModelState.userModel == null
-      || userModelState.userModel.followings == null
-      || userModelState.userModel.followings.isEmpty)
-        return MyProgressIndicator();
-      else
-        return FeedScreen(userModelState.userModel.followings);
-    },),
+    Consumer<UserModelState>(
+      builder: (BuildContext contex, UserModelState userModelState, Widget child) {
+        if(userModelState == null
+        || userModelState.userModel == null
+        || userModelState.userModel.followings == null
+        || userModelState.userModel.followings.isEmpty)
+          return MyProgressIndicator();
+        else
+          return FeedScreen(userModelState.userModel.followings);
+    }),
     SearchScreen(),
     Container(
       color: Colors.greenAccent,
